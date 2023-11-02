@@ -108,7 +108,9 @@ model Employees {
   disable       Boolean  @unique @default(false)
   createAt      DateTime @default(now())
   updateAt      DateTime @updatedAt
-  creatorId Task[]
+  creatorId Task[]  @relation("createdTasks")
+  ownedTasks Task[] @relation("ownedTasks")
+  verifiedTasks Task[] @relation("verifiedTasks")
 
   @@map("employees")
 }
@@ -157,11 +159,11 @@ model Task {
   priority_id String 
   startDate DateTime 
   deadline DateTime
-  creatorId      Employees        @relation(fields: [creator_id], references: [id])
+  creatorId      Employees        @relation("createdTasks",fields: [creator_id], references: [id])
   creator_id   Int         @unique
-  ownerId      Employees        @relation(fields: [owner_id], references: [id])
+  ownerId      Employees        @relation("ownedTasks",fields: [owner_id], references: [id])
   owner_id   Int         @unique
-  verifierId       Employees        @relation(fields: [verifier_id], references: [id])
+  verifierId       Employees        @relation("verifiedTasks",fields: [verifier_id], references: [id])
   verifier_id   Int         @unique
   
   createAt      DateTime @default(now())
