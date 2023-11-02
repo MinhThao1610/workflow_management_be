@@ -41,8 +41,6 @@ model Tim {
   description String
   status      String      @unique @default("hoat-dong")
   type        String
-  leader      User        @relation(fields: [leader_id], references: [id])
-  leader_id   Int         @unique
   startDate   DateTime
   endDate     DateTime
   isPublic    Boolean     @unique @default(true)
@@ -50,12 +48,21 @@ model Tim {
   company     Company     @relation(fields: [company_id], references: [id])
   company_id  Int
   employees   Employees[]
+  leader Leaders?
   isCancelTask Boolean @unique @default(true)
   statusTask ConfigStatusTask[] 
   priority Priority[]
   sprint Sprint[]
 
   @@map("tim")
+}
+
+model Leaders {
+  id Int        @id @default(autoincrement())
+  employee Employees @relation(fields: [employee_id], references: [id])
+  employee_id Int @unique
+  tim Tim @relation(fields: [tim_id], references: [id])
+  tim_id Int @unique
 }
 
 model User {
@@ -73,7 +80,6 @@ model User {
   createAt   DateTime   @default(now())
   updateAt   DateTime   @updatedAt
   employees  Employees?
-  leaderTim     Tim?
   leaderSprint Sprint?
 
   @@map("user")
@@ -108,6 +114,8 @@ model Employees {
   disable       Boolean  @unique @default(false)
   createAt      DateTime @default(now())
   updateAt      DateTime @updatedAt
+  leader Leaders?
+
   creatorId Task[]  @relation("createdTasks")
   ownedTasks Task[] @relation("ownedTasks")
   verifiedTasks Task[] @relation("verifiedTasks")
