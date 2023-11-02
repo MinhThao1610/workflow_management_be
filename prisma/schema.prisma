@@ -146,6 +146,8 @@ model Sprint {
   tim_id    Int      @unique
   createAt      DateTime @default(now())
   updateAt      DateTime @updatedAt
+
+  task Task[]
 }
 
 model Task {
@@ -163,6 +165,10 @@ model Task {
   owner_id   Int         @unique
   verifierId       Employees        @relation(fields: [verifier_id], references: [id])
   verifier_id   Int         @unique
+  sprintId       Sprint        @relation(fields: [sprint_id], references: [id])
+  sprint_id   Int       
+  type   TypeTask @unique
+  isPrivate Boolean @default(false)
   
   createAt      DateTime @default(now())
   updateAt      DateTime @updatedAt
@@ -178,6 +184,11 @@ enum Role {
 enum TypeSprint {
   SPRINT
   TEST
+}
+
+enum TypeTask {
+  task
+  bug
 }
 
 enum StatusTask {
