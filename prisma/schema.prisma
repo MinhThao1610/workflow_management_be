@@ -1,0 +1,186 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Company {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  phone       String      @unique
+  email       String      @unique
+  logo        String
+  website     String
+  address     String
+  description String
+  mission     String
+  coreValue   String
+  slogan      String
+  banner      String
+  expiredTime DateTime
+  status      String      @unique @default("hoat-dong")
+  createAt    DateTime    @default(now())
+  updateAt    DateTime    @updatedAt
+  employees   Employees[]
+  tim         Tim[]
+
+  @@map("company")
+}
+
+model Tim {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  avatar      String
+  description String
+  status      String      @unique @default("hoat-dong")
+  type        String
+  leader      User        @relation(fields: [leader_id], references: [id])
+  leader_id   Int         @unique
+  startDate   DateTime
+  endDate     DateTime
+  isPublic    Boolean     @unique @default(true)
+  slogan      String
+  company     Company     @relation(fields: [company_id], references: [id])
+  company_id  Int
+  employees   Employees[]
+  isCancelTask Boolean @unique @default(true)
+  statusTask ConfigStatusTask[] 
+  priority Priority[]
+  sprint Sprint[]
+
+  @@map("tim")
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  name       String     @unique
+  password   String     @unique
+  role       Role       @default(USER)
+  avatar     String
+  phone      String     @unique
+  address    String
+  school     String
+  email      String     @unique
+  decsiption String
+  disable    Boolean    @default(false)
+  createAt   DateTime   @default(now())
+  updateAt   DateTime   @updatedAt
+  employees  Employees?
+  leaderTim     Tim?
+  leaderSprint Sprint?
+
+  @@map("user")
+}
+
+model Employees {
+  id            Int      @id @default(autoincrement())
+  name          String   @unique
+  role          Role     @default(USER)
+  avatar        String
+  phone         String   @unique
+  address       String
+  school        String
+  email         String   @unique
+  decsiption    String
+  network       String
+  website       String
+  nickname      String
+  position      String
+  section       String
+  favoriteImage String
+  fromDate      DateTime @unique
+  toDate        DateTime
+  birthday      DateTime
+  isWorking     Boolean  @unique @default(true)
+  company       Company  @relation(fields: [company_id], references: [id])
+  company_id    Int      @unique
+  user          User     @relation(fields: [user_id], references: [id])
+  user_id       Int      @unique
+  tim           Tim      @relation(fields: [tim_id], references: [id])
+  tim_id        Int
+  disable       Boolean  @unique @default(false)
+  createAt      DateTime @default(now())
+  updateAt      DateTime @updatedAt
+  creatorId Task[]
+
+  @@map("employees")
+}
+
+model ConfigStatusTask {
+  id Int @id @default(autoincrement())
+  name String @unique
+  color String @unique
+  type StatusTask @unique
+  note String 
+  tim       Tim  @relation(fields: [tim_id], references: [id])
+  tim_id    Int      @unique
+}
+
+model Priority {
+  id Int @id @default(autoincrement())
+  name String @unique
+  color String @unique
+  tim       Tim  @relation(fields: [tim_id], references: [id])
+  tim_id    Int      @unique
+}
+
+model Sprint {
+  id Int @id @default(autoincrement())
+  title String @unique
+  startDate DateTime 
+  endDate DateTime
+  description String
+  status String 
+  progress String
+  type TypeSprint @unique
+  leader      User        @relation(fields: [leader_id], references: [id])
+  leader_id   Int         @unique
+  tim       Tim  @relation(fields: [tim_id], references: [id])
+  tim_id    Int      @unique
+  createAt      DateTime @default(now())
+  updateAt      DateTime @updatedAt
+}
+
+model Task {
+  id Int @id @default(autoincrement())
+  title String @unique
+  description String 
+  code String @unique
+  status_id String @unique
+  priority_id String 
+  startDate DateTime 
+  deadline DateTime
+  creatorId      Employees        @relation(fields: [creator_id], references: [id])
+  creator_id   Int         @unique
+  ownerId      Employees        @relation(fields: [owner_id], references: [id])
+  owner_id   Int         @unique
+  verifierId       Employees        @relation(fields: [verifier_id], references: [id])
+  verifier_id   Int         @unique
+  
+  createAt      DateTime @default(now())
+  updateAt      DateTime @updatedAt
+}
+
+
+enum Role {
+  USER
+  ADMIN
+  LEADER
+}
+
+enum TypeSprint {
+  SPRINT
+  TEST
+}
+
+enum StatusTask {
+  doing
+  done
+}
