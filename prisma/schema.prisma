@@ -148,6 +148,7 @@ model ConfigStatusTask {
   note   String
   tim    Tim        @relation(fields: [tim_id], references: [id])
   tim_id Int        @unique
+  task   Task[]
 
   @@map("configStatusTask")
 }
@@ -158,6 +159,7 @@ model Priority {
   color  String @unique
   tim    Tim    @relation(fields: [tim_id], references: [id])
   tim_id Int    @unique
+  task   Task[]
 
   @@map("priority")
 }
@@ -186,30 +188,32 @@ model Sprint {
 }
 
 model Task {
-  id            Int         @id @default(autoincrement())
-  title         String      @unique
+  id            Int              @id @default(autoincrement())
+  title         String           @unique
   description   String
-  code          Int         @unique
-  status_id     String      @unique
-  priority_id   String
+  code          Int              @unique
+  statusId      ConfigStatusTask @relation(fields: [status_id], references: [id])
+  status_id     Int              @unique
+  priorityId    Priority         @relation(fields: [priority_id], references: [id])
+  priority_id   Int
   startDate     DateTime
   deadline      DateTime
-  creatorId     Employees   @relation("createdTasks", fields: [creator_id], references: [id])
-  creator_id    Int         @unique
-  ownerId       Employees   @relation("ownedTasks", fields: [owner_id], references: [id])
-  owner_id      Int         @unique
-  verifierId    Employees   @relation("verifiedTasks", fields: [verifier_id], references: [id])
-  verifier_id   Int         @unique
-  sprintId      Sprint      @relation(fields: [sprint_id], references: [id])
+  creatorId     Employees        @relation("createdTasks", fields: [creator_id], references: [id])
+  creator_id    Int              @unique
+  ownerId       Employees        @relation("ownedTasks", fields: [owner_id], references: [id])
+  owner_id      Int              @unique
+  verifierId    Employees        @relation("verifiedTasks", fields: [verifier_id], references: [id])
+  verifier_id   Int              @unique
+  sprintId      Sprint           @relation(fields: [sprint_id], references: [id])
   sprint_id     Int
-  type          TypeTask    @unique
-  isPrivate     Boolean     @default(false)
-  testObjectId  TestObject  @relation(fields: [testObject_id], references: [id])
+  type          TypeTask         @unique
+  isPrivate     Boolean          @default(false)
+  testObjectId  TestObject       @relation(fields: [testObject_id], references: [id])
   testObject_id Int
-  testcaseId    Testcase    @relation(fields: [testcase_id], references: [id])
+  testcaseId    Testcase         @relation(fields: [testcase_id], references: [id])
   testcase_id   Int
-  createAt      DateTime    @default(now())
-  updateAt      DateTime    @updatedAt
+  createAt      DateTime         @default(now())
+  updateAt      DateTime         @updatedAt
   checklistes   Checklist[]
   exchanges     Exchange[]
 
@@ -419,6 +423,7 @@ enum TypeTask {
 
 enum StatusTask {
   doing
+  veryfying
   done
 }
 
