@@ -30,57 +30,63 @@ model Company {
   updateAt    DateTime    @updatedAt
   employees   Employees[]
   tim         Tim[]
+  milestones  Milestone[]
+  lib         Lib[]
+  channels    Channel[]
 
   @@map("company")
 }
 
 model Tim {
-  id          Int         @id @default(autoincrement())
-  name        String      @unique
-  avatar      String
-  description String
-  status      String      @unique @default("hoat-dong")
-  type        String
-  startDate   DateTime
-  endDate     DateTime
-  isPublic    Boolean     @unique @default(true)
-  slogan      String
-  company     Company     @relation(fields: [company_id], references: [id])
-  company_id  Int
-  employees   Employees[]
-  leader Leaders?
-  isCancelTask Boolean @unique @default(true)
-  statusTask ConfigStatusTask[] 
-  priority Priority[]
-  sprint Sprint[]
+  id            Int                @id @default(autoincrement())
+  name          String             @unique
+  avatar        String
+  description   String
+  status        String             @unique @default("hoat-dong")
+  type          TypeTim            @unique
+  startDate     DateTime
+  endDate       DateTime
+  isPublic      Boolean            @unique @default(true)
+  slogan        String
+  company       Company            @relation(fields: [company_id], references: [id])
+  company_id    Int
+  employees     Employees[]
+  leader        Leaders?
+  isCancelTask  Boolean            @unique @default(true)
+  statusTasks   ConfigStatusTask[]
+  prioritys     Priority[]
+  sprints       Sprint[]
+  notifications Notification[]
+  channels      Channel[]
 
   @@map("tim")
 }
 
 model Leaders {
-  id Int        @id @default(autoincrement())
-  employee Employees @relation(fields: [employee_id], references: [id])
-  employee_id Int @unique
-  tim Tim @relation(fields: [tim_id], references: [id])
-  tim_id Int @unique
+  id          Int       @id @default(autoincrement())
+  employee    Employees @relation(fields: [employee_id], references: [id])
+  employee_id Int       @unique
+  tim         Tim       @relation(fields: [tim_id], references: [id])
+  tim_id      Int       @unique
+
+  @@map("leaders")
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
-  name       String     @unique
-  password   String     @unique
-  role       Role       @default(USER)
-  avatar     String
-  phone      String     @unique
-  address    String
-  school     String
-  email      String     @unique
-  decsiption String
-  disable    Boolean    @default(false)
-  createAt   DateTime   @default(now())
-  updateAt   DateTime   @updatedAt
-  employees  Employees?
-  leaderSprint Sprint?
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  password    String     @unique
+  role        Role       @default(USER)
+  avatar      String
+  phone       String     @unique
+  address     String
+  school      String
+  email       String     @unique
+  description String
+  disable     Boolean    @default(false)
+  createAt    DateTime   @default(now())
+  updateAt    DateTime   @updatedAt
+  employee    Employees?
 
   @@map("user")
 }
@@ -94,7 +100,7 @@ model Employees {
   address       String
   school        String
   email         String   @unique
-  decsiption    String
+  description   String
   network       String
   website       String
   nickname      String
@@ -114,76 +120,286 @@ model Employees {
   disable       Boolean  @unique @default(false)
   createAt      DateTime @default(now())
   updateAt      DateTime @updatedAt
-  leader Leaders?
+  leader        Leaders?
 
-  creatorId Task[]  @relation("createdTasks")
-  ownedTasks Task[] @relation("ownedTasks")
-  verifiedTasks Task[] @relation("verifiedTasks")
+  creatorIds       Task[]         @relation("createdTasks")
+  ownedTasks       Task[]         @relation("ownedTasks")
+  verifiedTasks    Task[]         @relation("verifiedTasks")
+  exchanges        Exchange[]
+  testObjects      TestObject[]
+  creatorTestcases Testcase[]     @relation("createTestcase")
+  testerTestcases  Testcase[]     @relation("testerTestcase")
+  milestones       Milestone[]
+  likes            Like[]
+  comments         Comment[]
+  notifications    Notification[]
+  receivers        Receiver[]
+  channels         Channel[]
+  sprints          Sprint[]
 
   @@map("employees")
 }
 
 model ConfigStatusTask {
-  id Int @id @default(autoincrement())
-  name String @unique
-  color String @unique
-  type StatusTask @unique
-  note String 
-  tim       Tim  @relation(fields: [tim_id], references: [id])
-  tim_id    Int      @unique
+  id     Int        @id @default(autoincrement())
+  name   String     @unique
+  color  String     @unique
+  type   StatusTask @unique
+  note   String
+  tim    Tim        @relation(fields: [tim_id], references: [id])
+  tim_id Int        @unique
+
+  @@map("configStatusTask")
 }
 
 model Priority {
-  id Int @id @default(autoincrement())
-  name String @unique
-  color String @unique
-  tim       Tim  @relation(fields: [tim_id], references: [id])
-  tim_id    Int      @unique
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  color  String @unique
+  tim    Tim    @relation(fields: [tim_id], references: [id])
+  tim_id Int    @unique
+
+  @@map("priority")
 }
 
 model Sprint {
-  id Int @id @default(autoincrement())
-  title String @unique
-  startDate DateTime 
-  endDate DateTime
+  id          Int        @id @default(autoincrement())
+  title       String     @unique
+  startDate   DateTime
+  endDate     DateTime
   description String
-  status String 
-  progress String
-  type TypeSprint @unique
-  leader      User        @relation(fields: [leader_id], references: [id])
-  leader_id   Int         @unique
-  tim       Tim  @relation(fields: [tim_id], references: [id])
-  tim_id    Int      @unique
-  createAt      DateTime @default(now())
-  updateAt      DateTime @updatedAt
+  status      String
+  progress    String
+  type        TypeSprint @unique
+  leader      Employees  @relation(fields: [leader_id], references: [id])
+  leader_id   Int        @unique
+  tim         Tim        @relation(fields: [tim_id], references: [id])
+  tim_id      Int        @unique
+  createAt    DateTime   @default(now())
+  updateAt    DateTime   @updatedAt
 
-  task Task[]
+  tasks       Task[]
+  testObjects TestObject[]
+  testcases   Testcase[]
+
+  @@map("sprint")
 }
 
 model Task {
-  id Int @id @default(autoincrement())
-  title String @unique
-  description String 
-  code String @unique
-  status_id String @unique
-  priority_id String 
-  startDate DateTime 
-  deadline DateTime
-  creatorId      Employees        @relation("createdTasks",fields: [creator_id], references: [id])
-  creator_id   Int         @unique
-  ownerId      Employees        @relation("ownedTasks",fields: [owner_id], references: [id])
-  owner_id   Int         @unique
-  verifierId       Employees        @relation("verifiedTasks",fields: [verifier_id], references: [id])
+  id            Int         @id @default(autoincrement())
+  title         String      @unique
+  description   String
+  code          Int         @unique
+  status_id     String      @unique
+  priority_id   String
+  startDate     DateTime
+  deadline      DateTime
+  creatorId     Employees   @relation("createdTasks", fields: [creator_id], references: [id])
+  creator_id    Int         @unique
+  ownerId       Employees   @relation("ownedTasks", fields: [owner_id], references: [id])
+  owner_id      Int         @unique
+  verifierId    Employees   @relation("verifiedTasks", fields: [verifier_id], references: [id])
   verifier_id   Int         @unique
-  sprintId       Sprint        @relation(fields: [sprint_id], references: [id])
-  sprint_id   Int       
-  type   TypeTask @unique
-  isPrivate Boolean @default(false)
-  
-  createAt      DateTime @default(now())
-  updateAt      DateTime @updatedAt
+  sprintId      Sprint      @relation(fields: [sprint_id], references: [id])
+  sprint_id     Int
+  type          TypeTask    @unique
+  isPrivate     Boolean     @default(false)
+  testObjectId  TestObject  @relation(fields: [testObject_id], references: [id])
+  testObject_id Int
+  testcaseId    Testcase    @relation(fields: [testcase_id], references: [id])
+  testcase_id   Int
+  createAt      DateTime    @default(now())
+  updateAt      DateTime    @updatedAt
+  checklistes   Checklist[]
+  exchanges     Exchange[]
+
+  @@map("task")
 }
 
+model Exchange {
+  id         Int       @id @default(autoincrement())
+  content    String
+  creatorId  Employees @relation(fields: [creator_id], references: [id])
+  creator_id Int       @unique
+  index      Int       @unique
+  files      File[]
+  createAt   DateTime  @default(now())
+  updateAt   DateTime  @updatedAt
+  taskIds    Task      @relation(fields: [task_id], references: [id])
+  task_id    Int       @unique
+
+  @@map("exchange")
+}
+
+model File {
+  id           Int        @id @default(autoincrement())
+  name         String
+  code         String     @unique
+  type         String
+  exchangeId   Exchange   @relation(fields: [exchange_id], references: [id])
+  exchange_id  Int
+  testOjectId  TestObject @relation(fields: [testOject_id], references: [id])
+  testOject_id Int
+  milestoneId  Milestone  @relation(fields: [milestone_id], references: [id])
+  milestone_id Int
+  commentId    Comment    @relation(fields: [comment_id], references: [id])
+  comment_id   Int
+  channelId    Channel    @relation(fields: [channel_id], references: [id])
+  channel_id   Int
+
+  @@map("file")
+}
+
+model Checklist {
+  id      Int     @id @default(autoincrement())
+  content String  @unique
+  index   Int     @unique
+  status  Boolean @unique @default(false)
+  taskId  Task    @relation(fields: [task_id], references: [id])
+  task_id Int     @unique
+
+  @@map("checklist")
+}
+
+model TestObject {
+  id          Int        @id @default(autoincrement())
+  title       String     @unique
+  description String
+  creatorId   Employees  @relation(fields: [creator_id], references: [id])
+  creator_id  Int        @unique
+  sprintId    Sprint     @relation(fields: [sprint_id], references: [id])
+  sprint_id   Int        @unique
+  files       File[]
+  createAt    DateTime   @default(now())
+  tasks       Task[]
+  testcases   Testcase[]
+
+  @@map("testObject")
+}
+
+model Testcase {
+  id             Int        @id @default(autoincrement())
+  title          String     @unique
+  scenario       String
+  creatorId      Employees  @relation("createTestcase", fields: [creator_id], references: [id])
+  creator_id     Int        @unique
+  testerId       Employees  @relation("testerTestcase", fields: [tester_id], references: [id])
+  tester_id      Int        @unique
+  expectedResult String
+  result         String
+  status         Boolean    @unique @default(false)
+  sprintId       Sprint     @relation(fields: [sprint_id], references: [id])
+  sprint_id      Int        @unique
+  testObjectId   TestObject @relation(fields: [testObject_id], references: [id])
+  testObject_id  Int
+  createAt       DateTime   @default(now())
+  updateAt       DateTime   @updatedAt
+  tasks          Task[]
+
+  @@map("testcase")
+}
+
+model Milestone {
+  id          Int       @id @default(autoincrement())
+  title       String    @unique
+  content     String    @unique
+  linkVideo   String
+  datetime    DateTime
+  company     Company   @relation(fields: [company_id], references: [id])
+  company_id  Int
+  employeeId  Employees @relation(fields: [employee_id], references: [id])
+  employee_id Int       @unique
+  createAt    DateTime  @default(now())
+  updateAt    DateTime  @updatedAt
+  likes       Like[]
+  comments    Comment[]
+  pictures    File[]
+
+  @@map("milestone")
+}
+
+model Like {
+  id           Int       @id @default(autoincrement())
+  employeesId  Employees @relation(fields: [employee_id], references: [id])
+  employee_id  Int       @unique
+  milestoneId  Milestone @relation(fields: [milestone_id], references: [id])
+  milestone_id Int       @unique
+  createAt     DateTime  @default(now())
+
+  @@map("like")
+}
+
+model Comment {
+  id           Int       @id @default(autoincrement())
+  content      String    @unique
+  employeeId   Employees @relation(fields: [employee_id], references: [id])
+  employee_id  Int       @unique
+  milestoneId  Milestone @relation(fields: [milestone_id], references: [id])
+  milestone_id Int       @unique
+  createAt     DateTime  @default(now())
+  updateAt     DateTime  @updatedAt
+  files        File[]
+
+  @@map("comment")
+}
+
+model Lib {
+  id         Int      @id @default(autoincrement())
+  title      String   @unique
+  content    String   @unique
+  type       String   @unique
+  companyId  Company  @relation(fields: [company_id], references: [id])
+  company_id Int
+  isShow     Boolean  @unique @default(true)
+  createAt   DateTime @default(now())
+
+  @@map("lib")
+}
+
+model Notification {
+  id          Int        @id @default(autoincrement())
+  senderId    Employees  @relation(fields: [sender_id], references: [id])
+  sender_id   Int        @unique
+  content     String     @unique
+  actionUrl   String     @unique
+  isRead      Boolean    @unique @default(false)
+  timId       Tim        @relation(fields: [tim_id], references: [id])
+  tim_id      Int
+  createAt    DateTime   @default(now())
+  receiverIds Receiver[]
+
+  @@map("notification")
+}
+
+model Receiver {
+  employeeId  Employees    @relation(fields: [receiver_id], references: [id])
+  receiver_id Int          @unique
+  notiId      Notification @relation(fields: [noti_id], references: [id])
+  noti_id     Int          @unique
+
+  @@map("receiver")
+}
+
+model Channel {
+  id          Int       @id @default(autoincrement())
+  title       String    @unique
+  description String
+  icon        String
+  type        String
+  content     String
+  creatorId   Employees @relation(fields: [creator_id], references: [id])
+  creator_id  Int       @unique
+  picture     File[]
+  isShow      Boolean   @unique @default(true)
+  timId       Tim       @relation(fields: [tim_id], references: [id])
+  tim_id      Int
+  companyId   Company   @relation(fields: [company_id], references: [id])
+  company_id  Int
+  createAt    DateTime  @default(now())
+  updateAt    DateTime  @updatedAt
+
+  @@map("channel")
+}
 
 enum Role {
   USER
@@ -204,4 +420,9 @@ enum TypeTask {
 enum StatusTask {
   doing
   done
+}
+
+enum TypeTim {
+  function
+  project
 }
