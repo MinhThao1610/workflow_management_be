@@ -408,7 +408,6 @@ model Channel {
 enum Role {
   USER
   ADMIN
-  LEADER
   SYSTEMADMIN
 }
 
