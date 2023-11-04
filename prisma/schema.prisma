@@ -409,6 +409,7 @@ enum Role {
   USER
   ADMIN
   LEADER
+  SYSTEMADMIN
 }
 
 enum TypeSprint {
