@@ -6,9 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider          = "mysql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Company {
@@ -73,20 +73,23 @@ model Leaders {
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  name        String     @unique
-  password    String     @unique
-  role        Role       @default(USER)
-  avatar      String
-  phone       String     @unique
-  address     String
-  school      String
-  email       String     @unique
-  description String
-  disable     Boolean    @default(false)
-  createAt    DateTime   @default(now())
-  updateAt    DateTime   @updatedAt
-  employee    Employees?
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique
+  password           String               @unique
+  role               Role                 @default(USER)
+  avatar             String
+  phone              String               @unique
+  address            String
+  school             String
+  email              String               @unique
+  description        String
+  disable            Boolean              @default(false)
+  createAt           DateTime             @default(now())
+  updateAt           DateTime             @updatedAt
+  employee           Employees?
+  refreshToken       RefreshToken[]
+  resetPasswordToken ResetPasswordToken[]
+  otp                OTP[]
 
   @@map("user")
 }
@@ -385,6 +388,16 @@ model Receiver {
   @@map("receiver")
 }
 
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String
+  user      User     @relation(fields: [user_id], references: [id])
+  user_id   Int
+  expiresAt DateTime
+
+  @@map("refresh_tokens")
+}
+
 model Channel {
   id          Int       @id @default(autoincrement())
   title       String    @unique
@@ -404,6 +417,26 @@ model Channel {
   updateAt    DateTime  @updatedAt
 
   @@map("channel")
+}
+
+model OTP {
+  id         Int      @id @default(autoincrement())
+  otp        String
+  expireTime DateTime
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+
+  @@map("otp")
+}
+
+model ResetPasswordToken {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userEmail], references: [email])
+  userEmail String
+  token     String
+  createdAt DateTime @default(now())
+
+  @@map("reset_password_token")
 }
 
 enum Role {
