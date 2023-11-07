@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: '26112001'
+      MYSQL_DATABASE: development
+    ports:
+      - '3308:3306'
+    volumes:
+      - development:/var/lib/mysql/
+
+volumes:
+  development:
+    name: development
+
