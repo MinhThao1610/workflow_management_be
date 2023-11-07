@@ -208,6 +208,7 @@ model Task {
   sprint_id     Int
   type          TypeTask         @unique
   isPrivate     Boolean          @default(false)
+  isCancel      Boolean          @unique @default(false)
   testObjectId  TestObject       @relation(fields: [testObject_id], references: [id])
   testObject_id Int
   testcaseId    Testcase         @relation(fields: [testcase_id], references: [id])
