@@ -84,6 +84,7 @@ model User {
   email              String               @unique
   description        String
   disable            Boolean              @default(false)
+  isOwner            Boolean              @unique @default(false)
   createAt           DateTime             @default(now())
   updateAt           DateTime             @updatedAt
   employee           Employees?
