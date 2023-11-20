@@ -187,6 +187,7 @@ model Sprint {
   tasks       Task[]
   testObjects TestObject[]
   testcases   Testcase[]
+  PlanItem    PlanItem[]
 
   @@map("sprint")
 }
@@ -255,6 +256,10 @@ model File {
   comment_id   Int
   channelId    Channel    @relation(fields: [channel_id], references: [id])
   channel_id   Int
+  reportId     Report     @relation(fields: [report_id], references: [id])
+  report_id    Int
+  PlanItem     PlanItem?  @relation(fields: [planItemId], references: [id])
+  planItemId   Int?
 
   @@map("file")
 }
@@ -438,6 +443,29 @@ model ResetPasswordToken {
   createdAt DateTime @default(now())
 
   @@map("reset_password_token")
+}
+
+model Report {
+  id           Int     @id @default(autoincrement())
+  title        String
+  content      String
+  emailSend    String
+  emailCC      String?
+  emailReceive String
+  files        File[]
+
+  @@map("report")
+}
+
+model PlanItem {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  files       File[]
+  sprintId    Sprint  @relation(fields: [sprint_id], references: [id])
+  sprint_id   Int
+
+  @@map("plan_item")
 }
 
 enum Role {
