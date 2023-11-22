@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { CompanyModule } from './company/company.module';
 
 @Module({
   // eslint-disable-next-line prettier/prettier
@@ -43,6 +44,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         },
       },
     }),
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
