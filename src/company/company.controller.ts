@@ -33,12 +33,8 @@ export class CompanyController {
 
   @UseGuards(JwtAuthGuard)
   @Get('get-list')
-  async getCompanies(
-    @Query() pagination: PaginationDto, // Phần phân trang sử dụng PaginationDto
-    @Query() filters: FilterDto,
-  ) {
+  async getCompanies(@Query() filters: FilterDto) {
     const companies = await this.companyService.getCompaniesWithFilters(
-      pagination,
       filters,
     );
 
