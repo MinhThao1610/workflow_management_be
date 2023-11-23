@@ -51,12 +51,8 @@ export class CompanyService {
     }
   }
 
-  async getCompaniesWithFilters(
-    paginationOptions: { pageIndex: number; pageSize: number },
-    filters: FilterDto,
-  ) {
-    const { pageSize, pageIndex } = paginationOptions;
-    const { name, phone, email, status } = filters;
+  async getCompaniesWithFilters(filters: FilterDto) {
+    const { name, phone, email, status, pageSize, pageIndex } = filters;
 
     const totalCompanies = await this.prisma.company.count({
       where: {

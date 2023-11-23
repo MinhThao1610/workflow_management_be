@@ -12,6 +12,7 @@ import { LoginDto } from './dto/login.dto';
 import { EmailService } from './email.service';
 import { OtpService } from './otp.service';
 import lodash from 'lodash';
+import Role from './role/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -45,8 +46,12 @@ export class AuthService {
     );
   }
 
-  async createAccessToken(userId: number) {
-    const payload = { sub: userId };
+  async createAccessToken(userId: number, payloadProps: any) {
+    const payload = {
+      sub: userId,
+      email: payloadProps.email,
+      role: payloadProps.role,
+    };
     return {
       access_token: this.jwtService.sign(payload, {
         secret: process.env.JWT_SECRET,
@@ -63,8 +68,8 @@ export class AuthService {
     return token;
   }
 
-  async createRefreshToken(userId: number) {
-    const payload = { sub: userId };
+  async createRefreshToken(userId: number, email: string, role: Role) {
+    const payload = { sub: userId, email: email, role: role };
     const refreshToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
       expiresIn: '1d',
@@ -116,9 +121,14 @@ export class AuthService {
     delete user.password;
     return {
       access_token: this.jwtService.sign(payload, {
+        secret: process.env.JWT_SECRET,
         expiresIn: '15m',
       }),
-      refresh_token: await this.createRefreshToken(user.id),
+      refresh_token: await this.createRefreshToken(
+        user.id,
+        user.email,
+        user.role,
+      ),
       user_info: user,
     };
   }
@@ -143,7 +153,7 @@ export class AuthService {
       // Nếu không tồn tại, bạn có thể ném ra một UnauthorizedException.
 
       // Nếu refreshToken hợp lệ, bạn có thể tạo lại mã thông báo truy cập.
-      const newAccessToken = this.createAccessToken(userId);
+      const newAccessToken = this.createAccessToken(userId, payload);
 
       return newAccessToken;
     } catch (error) {
