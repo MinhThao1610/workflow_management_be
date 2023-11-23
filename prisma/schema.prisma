@@ -14,8 +14,8 @@ datasource db {
 model Company {
   id          Int         @id @default(autoincrement())
   name        String      @unique
-  phone       String      @unique
-  email       String      @unique
+  phone       String
+  email       String
   logo        String
   website     String
   address     String
@@ -25,7 +25,7 @@ model Company {
   slogan      String
   banner      String
   expiredTime DateTime
-  status      String      @unique @default("hoat-dong")
+  status      String      @default("hoat-dong")
   createAt    DateTime    @default(now())
   updateAt    DateTime    @updatedAt
   employees   Employees[]
@@ -39,20 +39,20 @@ model Company {
 
 model Tim {
   id            Int                @id @default(autoincrement())
-  name          String             @unique
+  name          String
   avatar        String
   description   String
-  status        String             @unique @default("hoat-dong")
-  type          TypeTim            @unique
+  status        String             @default("hoat-dong")
+  type          TypeTim
   startDate     DateTime
   endDate       DateTime
-  isPublic      Boolean            @unique @default(true)
+  isPublic      Boolean            @default(true)
   slogan        String
   company       Company            @relation(fields: [company_id], references: [id])
   company_id    Int
   employees     Employees[]
   leader        Leaders?
-  isCancelTask  Boolean            @unique @default(true)
+  isCancelTask  Boolean            @default(true)
   statusTasks   ConfigStatusTask[]
   prioritys     Priority[]
   sprints       Sprint[]
@@ -74,17 +74,17 @@ model Leaders {
 
 model User {
   id                 Int                  @id @default(autoincrement())
-  name               String               @unique
-  password           String               @unique
+  name               String
+  password           String
   role               Role                 @default(USER)
   avatar             String
-  phone              String               @unique
+  phone              String
   address            String
   school             String
   email              String               @unique
   description        String
   disable            Boolean              @default(false)
-  isOwner            Boolean              @unique @default(false)
+  isOwner            Boolean              @default(false)
   createAt           DateTime             @default(now())
   updateAt           DateTime             @updatedAt
   employee           Employees?
@@ -97,10 +97,10 @@ model User {
 
 model Employees {
   id            Int      @id @default(autoincrement())
-  name          String   @unique
+  name          String
   role          Role     @default(USER)
   avatar        String
-  phone         String   @unique
+  phone         String
   address       String
   school        String
   email         String   @unique
@@ -111,17 +111,17 @@ model Employees {
   position      String
   section       String
   favoriteImage String
-  fromDate      DateTime @unique
+  fromDate      DateTime
   toDate        DateTime
   birthday      DateTime
-  isWorking     Boolean  @unique @default(true)
+  isWorking     Boolean  @default(true)
   company       Company  @relation(fields: [company_id], references: [id])
-  company_id    Int      @unique
+  company_id    Int
   user          User     @relation(fields: [user_id], references: [id])
   user_id       Int      @unique
   tim           Tim      @relation(fields: [tim_id], references: [id])
   tim_id        Int
-  disable       Boolean  @unique @default(false)
+  disable       Boolean  @default(false)
   createAt      DateTime @default(now())
   updateAt      DateTime @updatedAt
   leader        Leaders?
@@ -146,12 +146,12 @@ model Employees {
 
 model ConfigStatusTask {
   id     Int        @id @default(autoincrement())
-  name   String     @unique
-  color  String     @unique
-  type   StatusTask @unique
+  name   String
+  color  String
+  type   StatusTask
   note   String
   tim    Tim        @relation(fields: [tim_id], references: [id])
-  tim_id Int        @unique
+  tim_id Int
   task   Task[]
 
   @@map("configStatusTask")
@@ -159,10 +159,10 @@ model ConfigStatusTask {
 
 model Priority {
   id     Int    @id @default(autoincrement())
-  name   String @unique
-  color  String @unique
+  name   String
+  color  String
   tim    Tim    @relation(fields: [tim_id], references: [id])
-  tim_id Int    @unique
+  tim_id Int
   task   Task[]
 
   @@map("priority")
@@ -170,17 +170,17 @@ model Priority {
 
 model Sprint {
   id          Int        @id @default(autoincrement())
-  title       String     @unique
+  title       String
   startDate   DateTime
   endDate     DateTime
   description String
   status      String
   progress    String
-  type        TypeSprint @unique
+  type        TypeSprint
   leader      Employees  @relation(fields: [leader_id], references: [id])
-  leader_id   Int        @unique
+  leader_id   Int
   tim         Tim        @relation(fields: [tim_id], references: [id])
-  tim_id      Int        @unique
+  tim_id      Int
   createAt    DateTime   @default(now())
   updateAt    DateTime   @updatedAt
 
@@ -194,26 +194,26 @@ model Sprint {
 
 model Task {
   id            Int              @id @default(autoincrement())
-  title         String           @unique
+  title         String
   description   String
-  code          Int              @unique
+  code          Int
   statusId      ConfigStatusTask @relation(fields: [status_id], references: [id])
-  status_id     Int              @unique
+  status_id     Int
   priorityId    Priority         @relation(fields: [priority_id], references: [id])
   priority_id   Int
   startDate     DateTime
   deadline      DateTime
   creatorId     Employees        @relation("createdTasks", fields: [creator_id], references: [id])
-  creator_id    Int              @unique
+  creator_id    Int
   ownerId       Employees        @relation("ownedTasks", fields: [owner_id], references: [id])
-  owner_id      Int              @unique
+  owner_id      Int
   verifierId    Employees        @relation("verifiedTasks", fields: [verifier_id], references: [id])
-  verifier_id   Int              @unique
+  verifier_id   Int
   sprintId      Sprint           @relation(fields: [sprint_id], references: [id])
   sprint_id     Int
-  type          TypeTask         @unique
+  type          TypeTask
   isPrivate     Boolean          @default(false)
-  isCancel      Boolean          @unique @default(false)
+  isCancel      Boolean          @default(false)
   testObjectId  TestObject       @relation(fields: [testObject_id], references: [id])
   testObject_id Int
   testcaseId    Testcase         @relation(fields: [testcase_id], references: [id])
@@ -230,13 +230,13 @@ model Exchange {
   id         Int       @id @default(autoincrement())
   content    String
   creatorId  Employees @relation(fields: [creator_id], references: [id])
-  creator_id Int       @unique
-  index      Int       @unique
+  creator_id Int
+  index      Int
   files      File[]
   createAt   DateTime  @default(now())
   updateAt   DateTime  @updatedAt
   taskIds    Task      @relation(fields: [task_id], references: [id])
-  task_id    Int       @unique
+  task_id    Int
 
   @@map("exchange")
 }
@@ -244,7 +244,7 @@ model Exchange {
 model File {
   id           Int        @id @default(autoincrement())
   name         String
-  code         String     @unique
+  code         String
   type         String
   exchangeId   Exchange   @relation(fields: [exchange_id], references: [id])
   exchange_id  Int
@@ -266,23 +266,23 @@ model File {
 
 model Checklist {
   id      Int     @id @default(autoincrement())
-  content String  @unique
-  index   Int     @unique
-  status  Boolean @unique @default(false)
+  content String
+  index   Int
+  status  Boolean @default(false)
   taskId  Task    @relation(fields: [task_id], references: [id])
-  task_id Int     @unique
+  task_id Int
 
   @@map("checklist")
 }
 
 model TestObject {
   id          Int        @id @default(autoincrement())
-  title       String     @unique
+  title       String
   description String
   creatorId   Employees  @relation(fields: [creator_id], references: [id])
-  creator_id  Int        @unique
+  creator_id  Int
   sprintId    Sprint     @relation(fields: [sprint_id], references: [id])
-  sprint_id   Int        @unique
+  sprint_id   Int
   files       File[]
   createAt    DateTime   @default(now())
   tasks       Task[]
@@ -293,17 +293,17 @@ model TestObject {
 
 model Testcase {
   id             Int        @id @default(autoincrement())
-  title          String     @unique
+  title          String
   scenario       String
   creatorId      Employees  @relation("createTestcase", fields: [creator_id], references: [id])
-  creator_id     Int        @unique
+  creator_id     Int
   testerId       Employees  @relation("testerTestcase", fields: [tester_id], references: [id])
-  tester_id      Int        @unique
+  tester_id      Int
   expectedResult String
   result         String
-  status         Boolean    @unique @default(false)
+  status         Boolean    @default(false)
   sprintId       Sprint     @relation(fields: [sprint_id], references: [id])
-  sprint_id      Int        @unique
+  sprint_id      Int
   testObjectId   TestObject @relation(fields: [testObject_id], references: [id])
   testObject_id  Int
   createAt       DateTime   @default(now())
@@ -315,14 +315,14 @@ model Testcase {
 
 model Milestone {
   id          Int       @id @default(autoincrement())
-  title       String    @unique
-  content     String    @unique
+  title       String
+  content     String
   linkVideo   String
   datetime    DateTime
   company     Company   @relation(fields: [company_id], references: [id])
   company_id  Int
   employeeId  Employees @relation(fields: [employee_id], references: [id])
-  employee_id Int       @unique
+  employee_id Int
   createAt    DateTime  @default(now())
   updateAt    DateTime  @updatedAt
   likes       Like[]
@@ -335,9 +335,9 @@ model Milestone {
 model Like {
   id           Int       @id @default(autoincrement())
   employeesId  Employees @relation(fields: [employee_id], references: [id])
-  employee_id  Int       @unique
+  employee_id  Int
   milestoneId  Milestone @relation(fields: [milestone_id], references: [id])
-  milestone_id Int       @unique
+  milestone_id Int
   createAt     DateTime  @default(now())
 
   @@map("like")
@@ -345,11 +345,11 @@ model Like {
 
 model Comment {
   id           Int       @id @default(autoincrement())
-  content      String    @unique
+  content      String
   employeeId   Employees @relation(fields: [employee_id], references: [id])
-  employee_id  Int       @unique
+  employee_id  Int
   milestoneId  Milestone @relation(fields: [milestone_id], references: [id])
-  milestone_id Int       @unique
+  milestone_id Int
   createAt     DateTime  @default(now())
   updateAt     DateTime  @updatedAt
   files        File[]
@@ -359,12 +359,12 @@ model Comment {
 
 model Lib {
   id         Int      @id @default(autoincrement())
-  title      String   @unique
-  content    String   @unique
-  type       String   @unique
+  title      String
+  content    String
+  type       String
   companyId  Company  @relation(fields: [company_id], references: [id])
   company_id Int
-  isShow     Boolean  @unique @default(true)
+  isShow     Boolean  @default(true)
   createAt   DateTime @default(now())
 
   @@map("lib")
@@ -373,10 +373,10 @@ model Lib {
 model Notification {
   id          Int        @id @default(autoincrement())
   senderId    Employees  @relation(fields: [sender_id], references: [id])
-  sender_id   Int        @unique
-  content     String     @unique
-  actionUrl   String     @unique
-  isRead      Boolean    @unique @default(false)
+  sender_id   Int
+  content     String
+  actionUrl   String
+  isRead      Boolean    @default(false)
   timId       Tim        @relation(fields: [tim_id], references: [id])
   tim_id      Int
   createAt    DateTime   @default(now())
@@ -406,15 +406,15 @@ model RefreshToken {
 
 model Channel {
   id          Int       @id @default(autoincrement())
-  title       String    @unique
+  title       String
   description String
   icon        String
   type        String
   content     String
   creatorId   Employees @relation(fields: [creator_id], references: [id])
-  creator_id  Int       @unique
+  creator_id  Int
   picture     File[]
-  isShow      Boolean   @unique @default(true)
+  isShow      Boolean   @default(true)
   timId       Tim       @relation(fields: [tim_id], references: [id])
   tim_id      Int
   companyId   Company   @relation(fields: [company_id], references: [id])
