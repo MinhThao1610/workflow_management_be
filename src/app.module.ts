@@ -11,6 +11,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { CompanyModule } from './company/company.module';
 import { EmployeeModule } from './employee/employee.module';
+import { TimModule } from './tim/tim.module';
 
 @Module({
   // eslint-disable-next-line prettier/prettier
@@ -47,6 +48,7 @@ import { EmployeeModule } from './employee/employee.module';
     }),
     CompanyModule,
     EmployeeModule,
+    TimModule,
   ],
   controllers: [AppController],
   providers: [AppService],

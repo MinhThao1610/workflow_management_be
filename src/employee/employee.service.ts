@@ -3,6 +3,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FilterEmployeeDto } from './dto/filter-employee.dto';
+import Role from 'src/auth/role/role.enum';
 
 @Injectable()
 export class EmployeeService {
@@ -46,18 +47,34 @@ export class EmployeeService {
       pageIndex,
     } = filters;
 
+    const where = {
+      role: role ? { equals: role } : undefined,
+      name: name ? { contains: name } : undefined,
+      isWorking: isWorking !== undefined ? { equals: isWorking } : undefined,
+      company_id: company_id ? { equals: company_id } : undefined,
+      tim_id: tim_id ? { equals: tim_id } : undefined,
+      disable: disable !== undefined ? { equals: disable } : undefined,
+    };
+
     const employees = await this.prisma.employees.findMany({
-      where: {
-        role: role ? { equals: role } : undefined,
-        name: name ? { contains: name } : undefined,
-        isWorking: isWorking !== undefined ? { equals: isWorking } : undefined,
-        company_id: company_id ? { equals: company_id } : undefined,
-        tim_id: tim_id ? { equals: tim_id } : undefined,
-        disable: disable !== undefined ? { equals: disable } : undefined,
-      },
+      where: where,
       take: pageSize,
       skip: (pageIndex - 1) * pageSize,
     });
+
+    const totalCount = await this.prisma.employees.count({ where });
+
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    return {
+      data: employees,
+      meta: {
+        total: totalCount,
+        pageIndex,
+        totalPages,
+        pageSize: pageSize,
+      },
+    };
 
     return employees;
   }
@@ -71,12 +88,21 @@ export class EmployeeService {
     return findEmployee;
   }
 
-  async updateEmployee(id: number, updateEmployeeDto: UpdateEmployeeDto) {
+  async updateEmployee(
+    id: number,
+    updateEmployeeDto: UpdateEmployeeDto,
+    user: any,
+  ) {
     const existingEmployee = await this.prisma.employees.findUnique({
       where: { id },
     });
     if (!existingEmployee) {
       throw new HttpException('Employee not found', HttpStatus.NOT_FOUND);
+    }
+    const { role, sub: userId } = user;
+    if (role === Role.User) {
+      if (userId !== existingEmployee.user_id)
+        throw new HttpException('Bạn không có quyền', HttpStatus.FORBIDDEN);
     }
 
     const updatedEmployee = await this.prisma.employees.update({
