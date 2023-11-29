@@ -12,6 +12,8 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { CompanyModule } from './company/company.module';
 import { EmployeeModule } from './employee/employee.module';
 import { TimModule } from './tim/tim.module';
+import { TestObjectModule } from './testObject/testObject.module';
+import { TestcaseModule } from './testcase/testcase.module';
 
 @Module({
   // eslint-disable-next-line prettier/prettier
@@ -49,6 +51,8 @@ import { TimModule } from './tim/tim.module';
     CompanyModule,
     EmployeeModule,
     TimModule,
+    TestObjectModule,
+    TestcaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
