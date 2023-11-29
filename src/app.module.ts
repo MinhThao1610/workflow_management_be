@@ -10,6 +10,8 @@ import { PassportModule } from '@nestjs/passport';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { CompanyModule } from './company/company.module';
+import { TestObjectModule } from './testObject/testObject.module';
+import { TestcaseModule } from './testcase/testcase.module';
 
 @Module({
   // eslint-disable-next-line prettier/prettier
@@ -45,6 +47,8 @@ import { CompanyModule } from './company/company.module';
       },
     }),
     CompanyModule,
+    TestObjectModule,
+    TestcaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
