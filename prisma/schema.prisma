@@ -323,6 +323,7 @@ model Milestone {
   company_id  Int
   employeeId  Employees @relation(fields: [employee_id], references: [id])
   employee_id Int
+  isShow      Boolean
   createAt    DateTime  @default(now())
   updateAt    DateTime  @updatedAt
   likes       Like[]
