@@ -14,6 +14,8 @@ import { EmployeeModule } from './employee/employee.module';
 import { TimModule } from './tim/tim.module';
 import { TestObjectModule } from './testObject/testObject.module';
 import { TestcaseModule } from './testcase/testcase.module';
+import { MileStoneModule } from './milestone/mileStone.module';
+import { LikeModule } from './like/like.module';
 
 @Module({
   // eslint-disable-next-line prettier/prettier
@@ -53,6 +55,8 @@ import { TestcaseModule } from './testcase/testcase.module';
     TimModule,
     TestObjectModule,
     TestcaseModule,
+    MileStoneModule,
+    LikeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
