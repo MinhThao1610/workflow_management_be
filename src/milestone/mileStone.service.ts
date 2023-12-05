@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { MileStoneDto } from './dto/MileStone.dto';
+import { MileStoneDto } from './dto/mileStone.dto';
 
 @Injectable()
 export class MileStoneService {
