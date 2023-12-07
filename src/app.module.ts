@@ -18,6 +18,7 @@ import { MileStoneModule } from './milestone/mileStone.module';
 import { LikeModule } from './like/like.module';
 import { CommentModule } from './comment/comment.module';
 import { LibModule } from './lib/lib.module';
+import { LeaderModule } from './leader/leader.module';
 
 @Module({
   // eslint-disable-next-line prettier/prettier
@@ -61,6 +62,7 @@ import { LibModule } from './lib/lib.module';
     LikeModule,
     CommentModule,
     LibModule,
+    LeaderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
